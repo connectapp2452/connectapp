@@ -1,30 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Admin Throne | ConnectApp</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ version }}">
+    <title>Admin Control | ConnectApp</title>
 </head>
-<body style="padding: 20px;">
-    <h1 style="color: var(--primary);">Royal Management System</h1>
-    <table border="1" style="width: 100%; border-collapse: collapse; background: var(--card);">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Coins</th>
-                <th>Power Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.coin_balance }}</td>
-                <td>{{ user.power_level }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<body>
+    <nav class="navbar">
+        <h2 style="color: var(--gold);">Royal Panel</h2>
+        <a href="/dashboard" style="color:white; text-decoration:none;">← App</a>
+    </nav>
+
+    <div style="padding: 20px 5%;">
+        <h1 style="margin-bottom: 20px;">Kingdom Population</h1>
+        
+        <div style="overflow-x: auto; background: var(--card); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--primary);">
+                        <th style="padding: 15px;">Username</th>
+                        <th style="padding: 15px;">Email</th>
+                        <th style="padding: 15px;">Coins</th>
+                        <th style="padding: 15px;">Level</th>
+                        <th style="padding: 15px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 15px;">{{ user.username }}</td>
+                        <td style="padding: 15px; color: #ccc; font-size: 0.8rem;">{{ user.id[:8] }}...</td>
+                        <td style="padding: 15px; color: var(--gold);">{{ user.coin_balance }}</td>
+                        <td style="padding: 15px;">{{ user.power_level }}</td>
+                        <td style="padding: 15px;">
+                            <button class="btn-royal" style="padding: 5px 10px; font-size: 0.7rem;">Manage</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>

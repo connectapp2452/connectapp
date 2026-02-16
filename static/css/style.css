@@ -141,3 +141,21 @@ input {
     .nav-links a:first-child { font-size: 0.8rem; margin-right: 10px !important; }
     .btn-royal { padding: 10px 20px; font-size: 0.8rem; }
 }
+
+table th {
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--primary);
+}
+
+table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Ensure the manage button doesn't look weird */
+.btn-royal-small {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}

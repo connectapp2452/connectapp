@@ -110,6 +110,28 @@ def earn():
             return redirect(url_for('dashboard'))
     return render_template('earn.html', profile=profile)
 
+@app.route('/admin')
+def admin_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    profile = get_user_profile(session['user_id'])
+    
+    # Secure Admin Wall: Only Power Level 99 enters
+    if not profile or profile.get('power_level') < 99:
+        flash("You do not have Royal permissions.")
+        return redirect(url_for('dashboard'))
+        
+    try:
+        # Fetch all profiles sorted by highest coin balance
+        users_query = supabase.table('profiles').select('*').order('coin_balance', desc=True).execute()
+        users_list = users_query.data
+    except Exception as e:
+        print(f"Admin Error: {e}")
+        users_list = []
+    
+    return render_template('admin.html', users=users_list)
+
 @app.route('/logout')
 def logout():
     session.clear()
