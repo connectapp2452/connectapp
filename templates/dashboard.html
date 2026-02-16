@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Dashboard | ConnectApp</title>
+</head>
+<body>
+    <nav class="navbar">
+        <h2>ConnectApp</h2>
+        <div class="coin-badge">💰 {{ profile.coin_balance }} Coins</div>
+        <a href="/logout" style="color:white;">Logout</a>
+    </nav>
+
+    <div style="padding: 50px 10%; text-align: center;">
+        <h1>Welcome Back, {{ profile.username }}!</h1>
+        <p>Status: {% if profile.power_level >= 99 %} 👑 King (Admin) {% else %} 👤 Citizen {% endif %}</p>
+        
+        <div style="margin-top: 30px;" class="feature-card">
+            <h3>Daily Tasks</h3>
+            <p>Complete your first task to earn more coins!</p>
+            <button class="btn-royal">Check In (+5 Coins)</button>
+        </div>
+    </div>
+</body>
+</html>

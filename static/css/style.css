@@ -77,3 +77,40 @@ body {
     font-weight: 600;
     box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
 }
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        height: auto;
+        padding-top: 50px;
+    }
+    .hero-text h1 { font-size: 2.5rem; }
+    .hero-image img { width: 80%; margin-top: 30px; }
+    
+    .auth-container {
+        width: 90%;
+        margin: 50px auto;
+    }
+}
+
+.auth-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background: var(--card);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: white;
+    box-sizing: border-box; /* Prevents input from overflowing */
+}

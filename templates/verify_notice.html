@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Verify Your Account</title>
+</head>
+<body style="text-align: center; padding-top: 100px;">
+    <h1>Kingdom Invitation Sent! 📧</h1>
+    <p>We sent a verification link to <strong>{{ email }}</strong>.</p>
+    <p>You must click that link before you can log in and claim your 50 coins.</p>
+    <br>
+    <a href="/login" class="btn-royal">I've verified, let me in!</a>
+</body>
+</html>

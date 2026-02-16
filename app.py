@@ -6,19 +6,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# This uses the secure key we added to Render/ENV
 app.secret_key = os.getenv("SECRET_KEY")
 
-# Supabase Connection (Backend 'God Mode' using Service Role Key)
+# Supabase Connection
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 supabase = create_client(url, key)
+
+# --- MIDDLEWARE / HELPERS ---
+def get_user_profile(user_id):
+    """Fetch the profile from the database"""
+    try:
+        response = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
+        return response.data
+    except:
+        return None
 
 # --- ROUTES ---
 
 @app.route('/')
 def home():
-    # This now points to your animated, professional landing page
     return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -31,26 +38,29 @@ def register():
     username = request.form.get('username')
 
     try:
-        # 1. Sign up the user in Supabase Auth
-        auth_response = supabase.auth.sign_up({"email": email, "password": password})
+        # 1. Sign up in Supabase Auth (This triggers the verification email)
+        # We pass the username as 'display_name' or metadata
+        auth_response = supabase.auth.sign_up({
+            "email": email, 
+            "password": password,
+            "options": {"data": {"username": username}}
+        })
         
         if auth_response.user:
-            # 2. Create their Kingdom Profile with 50 Welcome Coins
+            # 2. Initialize the profile in the database
+            # Note: The user won't be able to log in until they click the email link
             user_data = {
                 "id": auth_response.user.id,
                 "username": username,
-                "coin_balance": 50,  # The "New King" welcome bonus
-                "power_level": 0     # 0 = Citizen, 99 = Admin
+                "coin_balance": 50,
+                "power_level": 0 # Default citizen
             }
             supabase.table('profiles').insert(user_data).execute()
             
-            # Store session info
-            session['user_id'] = auth_response.user.id
-            session['username'] = username
+            return render_template('verify_notice.html', email=email)
             
-            return redirect(url_for('dashboard'))
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Registration Error: {str(e)}"
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -61,31 +71,50 @@ def login():
     password = request.form.get('password')
     
     try:
-        # Authenticate user
         response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+        
         if response.user:
+            # Check if email is confirmed
+            if not response.user.email_confirmed_at:
+                return "<h1>Please verify your email first!</h1><p>Check your inbox for the confirmation link.</p>"
+
             session['user_id'] = response.user.id
-            # Fetch username from our profiles table
-            profile = supabase.table('profiles').select('username').eq('id', response.user.id).single().execute()
-            session['username'] = profile.data['username']
+            profile = get_user_profile(response.user.id)
+            session['username'] = profile['username'] if profile else "Citizen"
+            
             return redirect(url_for('dashboard'))
+            
     except Exception as e:
-        return "Login Failed. Check your credentials."
+        return "Login Failed. Ensure your email is verified and credentials are correct."
 
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
-    # Fetch real-time coin balance for the user
-    user_id = session['user_id']
-    profile = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
+    profile = get_user_profile(session['user_id'])
     
-    return f"""
-    <h1>Welcome to the Kingdom, {session['username']}!</h1>
-    <p>Your Balance: 💰 {profile.data['coin_balance']} ConnectCoins</p>
-    <a href='/logout'>Logout</a>
-    """
+    if not profile:
+        return "Profile not found. Please contact Admin."
+
+    return render_template('dashboard.html', profile=profile)
+
+# --- ADMIN SECTION ---
+@app.route('/admin')
+def admin_dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    profile = get_user_profile(session['user_id'])
+    
+    # Only allow access if Power Level is 99 (The King)
+    if not profile or profile.get('power_level') < 99:
+        return "<h1>Access Denied</h1><p>You do not have Royal permissions.</p>", 403
+        
+    # Fetch all users for the admin to see
+    users_list = supabase.table('profiles').select('*').execute()
+    
+    return render_template('admin.html', users=users_list.data)
 
 @app.route('/logout')
 def logout():
@@ -93,4 +122,6 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # FIX: This port binding prevents the infinite loading on Render
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
