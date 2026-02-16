@@ -19,7 +19,12 @@
         <form action="/register" method="POST">
             <input type="text" name="username" placeholder="Royal Username" required>
             <input type="email" name="email" placeholder="Email Address" required>
-            <input type="password" name="password" placeholder="Secure Password" required>
+            
+            <div class="password-wrapper">
+                <input type="password" id="reg-password" name="password" placeholder="Secure Password" required>
+                <span class="toggle-password" onclick="togglePass('reg-password')">👁️</span>
+            </div>
+
             <button type="submit" class="btn-royal" style="width: 100%; border: none; margin-top: 10px;">Claim My Coins</button>
         </form>
         
@@ -27,5 +32,12 @@
             Already a citizen? <a href="/login" style="color: var(--primary); text-decoration: none;">Login here</a>
         </p>
     </div>
+
+    <script>
+        function togglePass(id) {
+            const field = document.getElementById(id);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+    </script>
 </body>
 </html>

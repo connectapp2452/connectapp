@@ -9,14 +9,19 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "connect_app_royal_secret_99")
 
-# Supabase Connection
+# --- CONFIGURATION & DATABASE ---
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 supabase = create_client(url, key)
 
+# Secure Admin Credentials
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "@Loginlocal2452"
+
 # --- MIDDLEWARE / HELPERS ---
 
 def get_user_profile(user_id):
+    """Fetches the latest user data from Supabase profiles table"""
     try:
         response = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
         return response.data
@@ -28,7 +33,7 @@ def inject_version():
     """Forces mobile browsers to refresh CSS by adding a random version number"""
     return dict(version=random.randint(1, 99999))
 
-# --- ROUTES ---
+# --- STANDARD USER ROUTES ---
 
 @app.route('/health')
 def health():
@@ -110,27 +115,63 @@ def earn():
             return redirect(url_for('dashboard'))
     return render_template('earn.html', profile=profile)
 
-@app.route('/admin')
-def admin_dashboard():
+# --- MATURE ADMIN SECURITY SYSTEM ---
+
+@app.route('/admin-gate', methods=['GET', 'POST'])
+def admin_gate():
+    """Secondary security layer for Admin access"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
     profile = get_user_profile(session['user_id'])
     
-    # Secure Admin Wall: Only Power Level 99 enters
-    if not profile or profile.get('power_level') < 99:
-        flash("You do not have Royal permissions.")
+    # Check 1: User must have Power Level 99 in database
+    if not profile or profile.get('power_level', 0) < 99:
+        flash("You do not have the Royal bloodline for this area.")
         return redirect(url_for('dashboard'))
+
+    # Check 2: Verify hardcoded Admin Credentials
+    if request.method == 'POST':
+        user = request.form.get('admin_user')
+        password = request.form.get('admin_pass')
+        
+        if user == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_verified'] = True
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash("Incorrect Master Credentials.")
+            
+    return render_template('admin_login.html')
+
+@app.route('/admin')
+def admin_dashboard():
+    """The Protected Command Center"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    profile = get_user_profile(session['user_id'])
+    
+    # Strict Redirection if conditions aren't met
+    if not profile or profile.get('power_level', 0) < 99 or not session.get('admin_verified'):
+        return redirect(url_for('admin_gate'))
         
     try:
-        # Fetch all profiles sorted by highest coin balance
         users_query = supabase.table('profiles').select('*').order('coin_balance', desc=True).execute()
         users_list = users_query.data
     except Exception as e:
-        print(f"Admin Error: {e}")
+        print(f"Admin Table Error: {e}")
         users_list = []
     
     return render_template('admin.html', users=users_list)
+
+@app.route('/admin-logout')
+def admin_logout():
+    """Locks the Admin Gate without logging the user out of the main app"""
+    session.pop('admin_verified', None)
+    flash("Admin Gate Locked.")
+    return redirect(url_for('dashboard'))
+
+# --- AUTH SYSTEM LOGOUT ---
 
 @app.route('/logout')
 def logout():
@@ -138,5 +179,6 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
+    # Render uses the PORT environment variable
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)

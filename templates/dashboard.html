@@ -1,25 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ version }}">
     <title>Dashboard | ConnectApp</title>
 </head>
-<body>
-    <nav class="navbar">
-        <h2>ConnectApp</h2>
-        <div class="coin-badge">💰 {{ profile.coin_balance }} Coins</div>
-        <a href="/logout" style="color:white;">Logout</a>
-    </nav>
+<body class="app-body">
 
-    <div style="padding: 50px 10%; text-align: center;">
-        <h1>Welcome Back, {{ profile.username }}!</h1>
-        <p>Status: {% if profile.power_level >= 99 %} 👑 King (Admin) {% else %} 👤 Citizen {% endif %}</p>
-        
-        <div style="margin-top: 30px;" class="feature-card">
-            <h3>Daily Tasks</h3>
-            <p>Complete your first task to earn more coins!</p>
-            <button class="btn-royal">Check In (+5 Coins)</button>
+    <div id="sideDrawer" class="side-drawer">
+        <div class="drawer-header">
+            <h3>Menu</h3>
+            <span class="close-btn" onclick="toggleMenu()">×</span>
+        </div>
+        <div class="drawer-links">
+            <a href="/profile">👤 My Profile</a>
+            <a href="/vault">💰 Coin Vault</a>
+            {% if profile.power_level >= 99 %}
+            <a href="/admin-gate" style="color: var(--gold);">🛡️ Admin Panel</a>
+            {% endif %}
+            <hr style="opacity: 0.1; margin: 20px 0;">
+            <a href="/logout" style="color: var(--danger);">🚪 Logout</a>
         </div>
     </div>
+
+    <nav class="app-nav">
+        <div class="menu-trigger" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="app-logo">ConnectApp</div>
+        <div class="user-badge">
+            <span class="coin-count">{{ profile.coin_balance }}</span>
+            <span class="coin-icon">🪙</span>
+        </div>
+    </nav>
+
+    <main class="app-content">
+        <div class="welcome-section">
+            <h1>Welcome, {{ profile.username }}</h1>
+            <p>Your current rank: <strong>{{ "Royal" if profile.power_level >= 99 else "Citizen" }}</strong></p>
+        </div>
+
+        <div class="feed-placeholder">
+            <div class="card shadow-glow">
+                <h4>Daily Highlights</h4>
+                <p>No new updates in the Kingdom yet. Start earning coins!</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="bottom-nav">
+        <a href="/dashboard" class="nav-item active">🏠<span>Home</span></a>
+        <a href="/earn" class="nav-item">📈<span>Earn</span></a>
+        <div class="nav-floating-btn">
+            <a href="/post" class="float-btn">+</a>
+        </div>
+        <a href="/chat" class="nav-item">💬<span>Chat</span></a>
+        <a href="/settings" class="nav-item">⚙️<span>Settings</span></a>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const drawer = document.getElementById('sideDrawer');
+            drawer.classList.toggle('open');
+        }
+    </script>
 </body>
 </html>

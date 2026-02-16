@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ version }}">
+    <title>Restricted | Admin Gate</title>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    
+    <div class="auth-container" style="border: 1px solid var(--gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🛡️</div>
+            <h2 style="color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin: 0;">Royal Guard</h2>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">Double-Layer Authentication Required</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div style="color: #ff4b2b; background: rgba(255, 75, 43, 0.1); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 15px; text-align: center; border: 1px solid rgba(255, 75, 43, 0.2);">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="/admin-gate" method="POST">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 0.75rem; color: var(--gold); margin-bottom: 5px; margin-left: 5px;">ADMIN IDENTITY</label>
+                <input type="text" name="admin_user" placeholder="Enter Username" required 
+                       style="margin-bottom: 0; border-color: rgba(255, 215, 0, 0.2);">
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-size: 0.75rem; color: var(--gold); margin-bottom: 5px; margin-left: 5px;">MASTER KEY</label>
+                <div class="password-wrapper">
+                    <input type="password" id="gate-pass" name="admin_pass" placeholder="Enter Key" required 
+                           style="margin-bottom: 0; border-color: rgba(255, 215, 0, 0.2);">
+                    <span class="toggle-password" id="toggleIcon" onclick="togglePass()" style="top: 12px;">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-royal" style="width: 100%; background: var(--gold); color: #000; font-weight: 800; text-transform: uppercase;">
+                Unlock Dashboard
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <a href="/dashboard" style="color: #666; text-decoration: none; font-size: 0.8rem;">← Return to App</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePass() {
+            const field = document.getElementById('gate-pass');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.innerText = '🔒'; // Changes to lock when visible
+            } else {
+                field.type = 'password';
+                icon.innerText = '👁️'; // Back to eye
+            }
+        }
+    </script>
+</body>
+</html>

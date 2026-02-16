@@ -18,7 +18,12 @@
         
         <form action="/login" method="POST">
             <input type="email" name="email" placeholder="Email Address" required>
-            <input type="password" name="password" placeholder="Password" required>
+            
+            <div class="password-wrapper">
+                <input type="password" id="login-password" name="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePass('login-password')">👁️</span>
+            </div>
+
             <button type="submit" class="btn-royal" style="width: 100%; border: none; margin-top: 10px;">Enter Kingdom</button>
         </form>
         
@@ -26,5 +31,12 @@
             New here? <a href="/register" style="color: var(--primary); text-decoration: none;">Register for 50 Coins</a>
         </p>
     </div>
+
+    <script>
+        function togglePass(id) {
+            const field = document.getElementById(id);
+            field.type = field.type === 'password' ? 'text' : 'password';
+        }
+    </script>
 </body>
 </html>
