@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ version }}">
     <title>Join the Kingdom | ConnectApp</title>
 </head>
 <body>
-    <div style="max-width: 400px; margin: 100px auto; text-align: center;">
-        <h1 style="color: var(--primary);">ConnectApp</h1>
-        <p>Create an account to start earning coins!</p>
+    <nav class="navbar">
+        <h2 style="color: var(--primary); margin:0;">ConnectApp</h2>
+        <a href="/" style="color:white; text-decoration:none; font-size: 0.9rem;">← Back</a>
+    </nav>
+
+    <div class="auth-container" style="text-align: center;">
+        <h2 style="margin-bottom: 10px; color: var(--primary);">Create Account</h2>
+        <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 30px;">Start your journey with 50 Coins.</p>
         
         <form action="/register" method="POST">
-            <input type="text" name="username" placeholder="Username" required style="width:100%; margin-bottom:10px; padding:10px;">
-            <input type="email" name="email" placeholder="Email" required style="width:100%; margin-bottom:10px; padding:10px;">
-            <input type="password" name="password" placeholder="Password" required style="width:100%; margin-bottom:20px; padding:10px;">
-            <button type="submit" class="btn-royal">Begin Your Journey</button>
+            <input type="text" name="username" placeholder="Royal Username" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="password" name="password" placeholder="Secure Password" required>
+            <button type="submit" class="btn-royal" style="width: 100%; border: none; margin-top: 10px;">Claim My Coins</button>
         </form>
+        
+        <p style="margin-top: 20px; font-size: 0.85rem;">
+            Already a citizen? <a href="/login" style="color: var(--primary); text-decoration: none;">Login here</a>
+        </p>
     </div>
 </body>
 </html>

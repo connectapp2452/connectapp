@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <title>Verify Your Account</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ version }}">
+    <title>Verify Email | ConnectApp</title>
 </head>
-<body style="text-align: center; padding-top: 100px;">
-    <h1>Kingdom Invitation Sent! 📧</h1>
-    <p>We sent a verification link to <strong>{{ email }}</strong>.</p>
-    <p>You must click that link before you can log in and claim your 50 coins.</p>
-    <br>
-    <a href="/login" class="btn-royal">I've verified, let me in!</a>
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+    <div class="auth-container" style="text-align: center;">
+        <h1 style="color: var(--gold);">✉️ Check Your Inbox</h1>
+        <p>We sent a magic link to <strong>{{ email }}</strong>.</p>
+        <p style="color: #ccc; font-size: 0.9rem; margin-top: 15px;">You must click the link in your email to activate your 50 Welcome Coins!</p>
+        <br>
+        <a href="/login" class="btn-royal">I've Verified My Email</a>
+    </div>
 </body>
 </html>
