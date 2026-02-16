@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# High security key from env or fallback for local dev
 app.secret_key = os.getenv("SECRET_KEY", "connect_app_royal_secret_99")
 
 # Supabase Connection
@@ -18,7 +17,6 @@ supabase = create_client(url, key)
 # --- MIDDLEWARE / HELPERS ---
 
 def get_user_profile(user_id):
-    """Fetch the profile from the database"""
     try:
         response = supabase.table('profiles').select('*').eq('id', user_id).single().execute()
         return response.data
@@ -34,7 +32,6 @@ def inject_version():
 
 @app.route('/health')
 def health():
-    """Testing route to ensure the app is actually reachable"""
     return "Kingdom is Online", 200
 
 @app.route('/')
@@ -51,7 +48,6 @@ def register():
     username = request.form.get('username')
 
     try:
-        # 1. Sign up in Supabase Auth
         auth_response = supabase.auth.sign_up({
             "email": email, 
             "password": password,
@@ -59,7 +55,6 @@ def register():
         })
         
         if auth_response.user:
-            # 2. Initialize the profile with 50 Welcome Coins
             user_data = {
                 "id": auth_response.user.id,
                 "username": username,
@@ -78,11 +73,9 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        
         try:
             response = supabase.auth.sign_in_with_password({"email": email, "password": password})
             if response.user:
-                # Security: Ensure they verified their email
                 if not response.user.email_confirmed_at:
                     return render_template('verify_notice.html', email=email, resend=True)
 
@@ -99,7 +92,6 @@ def login():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
     profile = get_user_profile(session['user_id'])
     return render_template('dashboard.html', profile=profile)
 
@@ -107,35 +99,16 @@ def dashboard():
 def earn():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
     user_id = session['user_id']
     profile = get_user_profile(user_id)
-
     if request.method == 'POST':
         task_id = request.form.get('task_id')
-        
-        # Daily Check-in Logic
         if task_id == 'daily':
             new_balance = profile['coin_balance'] + 10
             supabase.table('profiles').update({"coin_balance": new_balance}).eq('id', user_id).execute()
-            flash("Success! +10 Coins added to your vault.")
+            flash("Success! +10 Coins added.")
             return redirect(url_for('dashboard'))
-
     return render_template('earn.html', profile=profile)
-
-@app.route('/admin')
-def admin_dashboard():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-        
-    profile = get_user_profile(session['user_id'])
-    
-    # Secure Admin Wall
-    if not profile or profile.get('power_level') < 99:
-        return "Access Denied", 403
-        
-    users_list = supabase.table('profiles').select('*').execute()
-    return render_template('admin.html', users=users_list.data)
 
 @app.route('/logout')
 def logout():
@@ -143,6 +116,5 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    # Binding to 0.0.0.0 is necessary for Render to route external traffic (your phone)
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
