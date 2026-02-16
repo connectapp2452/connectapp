@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <title>ConnectApp | The Coin Economy</title>
+</head>
+<body>
+    <nav class="navbar">
+        <h2 style="color: var(--primary);">ConnectApp</h2>
+        <div>
+            <a href="/login" style="color:white; margin-right:20px; text-decoration:none;">Login</a>
+            <a href="/register" class="btn-royal">Join Now</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-text" data-aos="fade-right">
+            <h1>The Social Economy <br> is Here.</h1>
+            <p style="font-size: 1.2rem; color: #ccc; max-width: 500px;">
+                Connect with friends, complete daily challenges, and earn 
+                <span style="color: var(--gold); font-weight:bold;">ConnectCoins</span>. 
+                Turn your social interactions into real digital value.
+            </p>
+            <br>
+            <a href="/register" class="btn-royal">Get 50 Welcome Coins</a>
+        </div>
+        <div class="hero-image" data-aos="zoom-in">
+            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-1.2.1&auto=format&fit=crop&w=1074&q=80" alt="Social App UI">
+        </div>
+    </section>
+
+    <section style="padding: 100px 10%;">
+        <h2 style="text-align:center; margin-bottom: 50px;">Why ConnectApp?</h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <h3 style="color: var(--gold);">Earn Coins</h3>
+                <p>Complete tasks, engage with posts, and grow your digital wallet daily.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <h3 style="color: var(--primary);">Gift Friends</h3>
+                <p>Use your coins to buy exclusive digital gifts for your favorite creators.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <h3 style="color: #ff4b2b;">Real Growth</h3>
+                <p>The more you connect, the more your Power Level increases.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000 });
+    </script>
+</body>
+</html>
